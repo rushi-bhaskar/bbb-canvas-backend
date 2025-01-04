@@ -3,7 +3,7 @@ services:
     type: web
     env: node
     region: oregon # Change the region as needed (e.g., `oregon`, `frankfurt`, `singapore`)
-    buildCommand: npm install && npm run build
+    buildCommand: npm install
     startCommand: npm start
     autoDeploy: true # Automatically deploy new changes pushed to your GitHub/GitLab repository
     plan: free # Use `free` for the free tier or `standard` for paid plans
