@@ -1,0 +1,16 @@
+services:
+  - name: nodejs-backend
+    type: web
+    env: node
+    region: oregon # Change the region as needed (e.g., `oregon`, `frankfurt`, `singapore`)
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true # Automatically deploy new changes pushed to your GitHub/GitLab repository
+    plan: standard # Use `free` for the free tier or `standard` for paid plans
+    branch: main # Branch to deploy from; update as per your repository
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_SECRET
+        sync: false # Set to `true` if you want to use Render's environment variable manager
+    healthCheckPath: /health # Specify the endpoint for health checks
