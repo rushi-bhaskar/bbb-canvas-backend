@@ -15,15 +15,25 @@ app.use(express.json()); // For parsing application/json
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:3000", // Update this to match your frontend URL
+        origin: ["http://localhost:3000","http://localhost:5173"], // Update this to match your frontend URL
         methods: ["GET", "POST"],
     },
-});
+}); 
 
 // Store shapes (optional; for tracking state server-side)
 let shapes = [
     { x: 0, y: 0, width: 200, height: 200, color: 'red' },
 ];
+
+let objects = {
+    box1: { rotation: { x: 0, y: 0 } },
+  };
+
+  let shapesData = [
+    { id: 1, type: "circle", color: "#ffffff" },
+    { id: 2, type: "rectangle", color: "#ffffff" },
+    { id: 3, type: "triangle", color: "#ffffff" },
+  ];
 
 // Handle Socket.IO connections
 io.on('connection', (socket) => {
@@ -35,6 +45,9 @@ io.on('connection', (socket) => {
 
     // Send current shapes to the newly connected client
     socket.emit('initialize_shapes', shapes);
+    
+    // Send initial state to the client
+    socket.emit("init", objects);
 
     // Listen for shape updates from a client
     socket.on('set_shape_', (data) => {
@@ -53,6 +66,23 @@ io.on('connection', (socket) => {
         // Broadcast the update to all other clients
         socket.broadcast.emit('set_shape_', data);
     });
+
+        // Handle rotation events
+  socket.on("rotateObject", ({ id, rotation }) => {
+    if (objects[id]) {
+      objects[id].rotation = rotation;
+      io.emit("objectRotated", { id, rotation }); // Broadcast to all clients
+    }
+  });
+
+  // Send initial shapes data
+  socket.emit("init_shapes", shapesData);
+
+  // Listen for shape color updates
+  socket.on("update_color", (updatedShapes) => {
+    shapesData = updatedShapes; // Update the server-side state
+    io.emit("update_shapes", shapesData); // Broadcast updated shapes to all clients
+  });
 
     // Handle disconnection
     socket.on('disconnect', () => {
