@@ -2,6 +2,10 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const multer = require("multer");
+const path = require("path");
+
+const upload = multer({ dest: "uploads/" });
 
 // Create an Express application
 const app = express();
@@ -10,6 +14,13 @@ const port = 5000;
 // Middleware
 app.use(cors());
 app.use(express.json()); // For parsing application/json
+
+app.post("/upload", upload.single("file"), (req, res) => {
+    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+    res.json({ fileUrl });
+  });
+  
+  app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Create HTTP server and Socket.IO instance
 const server = http.createServer(app);
@@ -34,6 +45,8 @@ let objects = {
     { id: 2, type: "rectangle", color: "#ffffff" },
     { id: 3, type: "triangle", color: "#ffffff" },
   ];
+
+  let games = [];
 
 // Handle Socket.IO connections
 io.on('connection', (socket) => {
@@ -82,6 +95,20 @@ io.on('connection', (socket) => {
   socket.on("update_color", (updatedShapes) => {
     shapesData = updatedShapes; // Update the server-side state
     io.emit("update_shapes", shapesData); // Broadcast updated shapes to all clients
+  });
+
+   // Send the current games to the newly connected client
+   socket.emit('init_games', games);
+
+  // Handle new game creation
+  socket.on('new_game', (newGame) => {
+    games.push(newGame);
+    io.emit('update_games', games); // Broadcast the updated games array to all clients
+});
+
+  // Handle audio play event
+  socket.on('play_audio', (soundUrl) => {
+    io.emit('play_audio', soundUrl); // Broadcast the audio play event to all clients
   });
 
     // Handle disconnection
