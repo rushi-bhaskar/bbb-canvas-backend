@@ -4,8 +4,8 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const multer = require("multer");
 const path = require("path");
-
-const upload = multer({ dest: "uploads/" });
+const uploadRoutes = require("./routes/uploadRoutes"); // Import the upload route
+require('./mongoose')
 
 // Create an Express application
 const app = express();
@@ -15,10 +15,8 @@ const port = 5000;
 app.use(cors());
 app.use(express.json()); // For parsing application/json
 
-app.post("/upload", upload.single("file"), (req, res) => {
-    const fileUrl = `http://localhost:5000/uploads/${req.file.filename}`;
-    res.json({ fileUrl });
-  });
+// Use the file upload routes
+app.use("/upload", uploadRoutes);  // Updated: Routes moved to a separate file
   
   app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
