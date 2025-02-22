@@ -50,4 +50,32 @@ const getAllFiles = async (req, res) => {
     }
 };
 
-module.exports = { upload, uploadFile, getAllFiles };
+const deleteFile = async (req, res) => {
+    try {
+        const file = await Upload.findById(req.params.id);
+        if (!file) {
+            return res.status(404).json({ error: "File not found" });
+        }
+
+         // Extract the filename from the file path
+         const filename = path.basename(file.filePath);
+         const filePath = path.join(__dirname, "../uploads", filename);
+
+         // Delete the file from the file system
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+
+
+        // Remove entry from MongoDB
+        await Upload.findByIdAndDelete(req.params.id);
+
+        res.json({ message: "File deleted successfully" });
+        // res.json(file);
+    } catch (error) {
+        console.error("Error deleting file:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+module.exports = { upload, uploadFile, getAllFiles, deleteFile };
