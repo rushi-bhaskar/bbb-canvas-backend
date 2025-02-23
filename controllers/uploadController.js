@@ -36,7 +36,7 @@ const uploadFile = async (req, res) => {
         res.json({ fileUrl, message: "File uploaded successfully and saved to DB" });
     } catch (error) {
         console.error("Error saving file to DB:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ success:false, error: "Internal Server Error" });
     }
 };
 
@@ -46,7 +46,7 @@ const getAllFiles = async (req, res) => {
         res.json(files);
     } catch (error) {
         console.error("Error fetching uploads:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ success:false, error: "Internal Server Error" });
     }
 };
 
@@ -74,7 +74,7 @@ const deleteFile = async (req, res) => {
         // res.json(file);
     } catch (error) {
         console.error("Error deleting file:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ success:false, error: "Internal Server Error" });
     }
 };
 

@@ -10,3 +10,4 @@ mongoose.connect(mongooseConnectionString)
 
 
 require("./models/uploadModels")
+require("./models/assignmentModels")
