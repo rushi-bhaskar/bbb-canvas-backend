@@ -4,7 +4,8 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const multer = require("multer");
 const path = require("path");
-const uploadRoutes = require("./routes/uploadRoutes"); // Import the upload route
+const uploadRoutes = require("./routes/uploadRoutes");
+const assignmentRoutes = require("./routes/assignmentRoutes");
 require('./mongoose')
 
 // Create an Express application
@@ -16,7 +17,8 @@ app.use(cors());
 app.use(express.json()); // For parsing application/json
 
 // Use the file upload routes
-app.use("/upload", uploadRoutes);  // Updated: Routes moved to a separate file
+app.use("/upload", uploadRoutes); 
+app.use("/assignment", assignmentRoutes);
   
   app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
