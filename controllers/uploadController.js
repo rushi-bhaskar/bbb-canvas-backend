@@ -50,6 +50,20 @@ const getAllFiles = async (req, res) => {
     }
 };
 
+const getFileById = async (req, res) => {
+    try {
+        const file = await Upload.findById(req.params.id);
+        if (!file) {
+            return res.status(404).json({ error: "File not found" });
+        }
+        res.json({success : true , data: file});
+    } catch (error) {
+        console.error("Error fetching file:", error);
+        res.status(500).json({success:false, error: "Internal Server Error" });
+    }
+};
+
+
 const deleteFile = async (req, res) => {
     try {
         const file = await Upload.findById(req.params.id);
@@ -78,4 +92,4 @@ const deleteFile = async (req, res) => {
     }
 };
 
-module.exports = { upload, uploadFile, getAllFiles, deleteFile };
+module.exports = { upload, uploadFile, getAllFiles, deleteFile, getFileById };
