@@ -30,6 +30,38 @@ const getAllAssignments = async (req, res) => {
     }
 };
 
+const getAssignmentById = async (req, res) => {
+    try {
+        const Assignments = await Assignment.findById(req.params.id);
+        if (!Assignments) {
+            return res.status(404).json({ error: "Assignment not found" });
+        }
+        res.json({success : true , data: Assignments});
+    } catch (error) {
+        console.error("Error fetching assignment:", error);
+        res.status(500).json({success:false, error: "Internal Server Error" });
+    }
+};
+
+// const loadAssignment = async (req, res) => {
+//     try {
+        
+//         const {name, objects} = req.body;
+
+//         const newAssignment = new Assignment({
+//             name: name,
+//             objects: objects
+//         });
+
+//         await newAssignment.save();
+
+//         res.json({success : true, data: newAssignment, message: "Assignment created successfully" });
+//     } catch (error) {
+//         console.error("Error creating assignment:", error);
+//         res.status(500).json({  success:false,error: "Internal Server Error" });
+//     }
+// };
+
 const deleteAssignment = async (req, res) => {
     try {
         const assignmentToDelete = await Assignment.findById(req.params.id);
@@ -46,4 +78,4 @@ const deleteAssignment = async (req, res) => {
     }
 };
 
-module.exports = { createAssignment, getAllAssignments, deleteAssignment};
+module.exports = { createAssignment, getAllAssignments, deleteAssignment, getAssignmentById};
